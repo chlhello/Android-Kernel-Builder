@@ -1,4 +1,4 @@
-name: "build_polaris_ksunext"
+name: "build_polaris_ksu_next"
 
 env:
   OUT_DIR: "${{ github.workspace }}/out"
