@@ -77,7 +77,7 @@ jobs:
       - name: Patch Kernel for no-kprobe
         run: |
           cd $GITHUB_WORKSPACE
-          if grep -q "CONFIG_KSU" "device_kernel/fs/exec.c"; then
+          if grep -q "CONFIG_KSU" "Mix2s_KernelSu/fs/exec.c"; then
             echo "Your kernel source code appears to have been manually patched, so this step is skipped."
           else
             cp /tmp/Patches/extra_patches.sh device_kernel/
