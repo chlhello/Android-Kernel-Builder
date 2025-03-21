@@ -74,20 +74,7 @@ jobs:
 
           echo "🤔 Clone kernel source => ($KERNEL_REPO)"
 
-      - name: Patch Kernel for no-kprobe
-        run: |
-          cd $GITHUB_WORKSPACE
-          if grep -q "CONFIG_KSU" "Mix2s_KernelSu/fs/exec.c"; then
-            echo "Your kernel source code appears to have been manually patched, so this step is skipped."
-          else
-            cp /Patches/extra_patches.sh Mix2s_KernelSu/
-            cd Mix2s_KernelSu
-            bash extra_patches.sh
-            echo "execuated extra patch successfully."
-          else
-            echo "Cannot found normal_patches.sh in build project , please check u file existed in build project !"
-          fi
-          
+
       - name: "💫 Get toolchains"
         env:
           toolchains: "${{ toJSON(matrix.repos.toolchains) }}"
