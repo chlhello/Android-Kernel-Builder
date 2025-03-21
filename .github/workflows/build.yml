@@ -80,8 +80,8 @@ jobs:
           if grep -q "CONFIG_KSU" "Mix2s_KernelSu/fs/exec.c"; then
             echo "Your kernel source code appears to have been manually patched, so this step is skipped."
           else
-            cp /tmp/Patches/extra_patches.sh device_kernel/
-            cd device_kernel
+            cp /Patches/extra_patches.sh Mix2s_KernelSu/
+            cd Mix2s_KernelSu
             bash extra_patches.sh
             echo "execuated extra patch successfully."
           else
