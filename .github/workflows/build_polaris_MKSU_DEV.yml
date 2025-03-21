@@ -1,4 +1,4 @@
-name: "build_polaris_MKSU_DEV"
+name: "Build kernels"
 
 env:
   OUT_DIR: "${{ github.workspace }}/out"
@@ -15,7 +15,7 @@ jobs:
       builddate: ${{ steps.generate-builddate.outputs.builddate }}
     steps:
       - name: "😄 Checkout"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
       - name: "😆 Generate Matrix"
         id: generate-matrix
@@ -125,6 +125,8 @@ jobs:
 
       - name: "😋 Update KernelSU"
         working-directory: ${{ env.KERNEL_NAME }}
+        env:
+          arch: ${{ steps.generate-args.outputs.ARCH }}
         if: ${{ env.withKernelSU == 'true' }}
         run: |
           if [ -d "./KernelSU" ]; then
@@ -136,18 +138,11 @@ jobs:
 
           curl -LSs "https://raw.githubusercontent.com/ShirkNeko/KernelSU/main/kernel/setup.sh" | bash -s dev
 
-          if [[ -d "NonGKI_Kernel_Patches" ]]; then
-            echo "Folder existed."
-          else
-            git clone https://github.com/JackA1ltman/NonGKI_Kernel_Patches.git -b mi_kernel NonGKI_Kernel_Patches
-          fi
+          echo -e "CONFIG_KPROBES=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
+          echo -e "CONFIG_HAVE_KPROBES=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
+          echo -e "CONFIG_KPROBE_EVENTS=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
 
-          cp NonGKI_Kernel_Patches/patches.sh ./
-          cp NonGKI_Kernel_Patches/extra_patches.sh ./
-
-          bash patches.sh
-          bash extra_patches.sh
-
+          cat arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
 
       - name: "👍 Make defconfig"
         working-directory: ${{ env.KERNEL_NAME }}
@@ -167,7 +162,7 @@ jobs:
           make ${args}
 
       - name: "💛 Upload Image"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         env:
           arch: ${{ steps.generate-args.outputs.ARCH }}
         with:
@@ -177,7 +172,7 @@ jobs:
           retention-days: 7
 
       - name: "💙 Upload Image.gz"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         env:
           arch: ${{ steps.generate-args.outputs.ARCH }}
         with:
@@ -187,7 +182,7 @@ jobs:
           retention-days: 7
 
       - name: "💜 Upload dtb"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         env:
           arch: ${{ steps.generate-args.outputs.ARCH }}
         with:
@@ -197,7 +192,7 @@ jobs:
           retention-days: 7
 
       - name: "❤️ Upload dtbo.img"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         env:
           arch: ${{ steps.generate-args.outputs.ARCH }}
         with:
@@ -222,7 +217,7 @@ jobs:
           zip -q -r "${{ env.anykernel }}.zip" *
 
       - name: "💾 Upload AnyKernel3 image => (${{ env.builddate }})"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         if: ${{ env.useAnykernel == 'true' }}
         with:
           name: "${{ env.KERNEL_DEVICE }}-${{ env.KERNEL_NAME }}_${{ env.builddate }}"
