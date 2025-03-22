@@ -143,7 +143,9 @@ jobs:
           echo -e "CONFIG_KPROBE_EVENTS=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
 
           cat arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
-          
+      - name: "😋 Patch Kernel for no-kprobe"
+        run: |
+          cd $GITHUB_WORKSPACE/Mix2s_MKSU
           if [[ -d "NonGKI_Kernel_Patches" ]]; then
             echo "Folder existed."
           else
