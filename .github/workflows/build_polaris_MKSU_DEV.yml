@@ -143,7 +143,18 @@ jobs:
           echo -e "CONFIG_KPROBE_EVENTS=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
 
           cat arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
+          
+          if [[ -d "NonGKI_Kernel_Patches" ]]; then
+            echo "Folder existed."
+          else
+            git clone https://github.com/JackA1ltman/NonGKI_Kernel_Patches.git -b mi_kernel NonGKI_Kernel_Patches
+          fi
 
+          cp NonGKI_Kernel_Patches/patches.sh ./
+          cp NonGKI_Kernel_Patches/extra_patches.sh ./
+
+          bash patches.sh
+          bash extra_patches.sh
       - name: "👍 Make defconfig"
         working-directory: ${{ env.KERNEL_NAME }}
         env:
