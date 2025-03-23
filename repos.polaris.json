@@ -2,12 +2,12 @@
   {
     "kernelSource": {
       "name": "Mix2s_MKSU",
-      "repo": "https://github.com/chlhello/Xiaomi_Kernel_OpenSource",
+      "repo": "https://github.com/MiCode/Xiaomi_Kernel_OpenSource",
       "branch": "polaris-o-oss",
       "device": "polaris",
       "defconfig": "polaris_user_defconfig"
     },
-    "withKernelSU": true,
+    "withKernelSU": flase,
     "toolchains": [
       {
         "repo": "https://github.com/Akitlove/android-kernel-tools",
