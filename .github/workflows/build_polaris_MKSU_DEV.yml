@@ -53,6 +53,15 @@ jobs:
       useAnykernel: ${{ matrix.repos.AnyKernel3.use }}
       release: ${{ matrix.repos.AnyKernel3.release }}
     steps:
+      # 仅检出 patches 目录（稀疏检出）
+      - name: "🔍 Checkout patches"
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: "patches"  # 关键参数：仅拉取 patches 目录
+          sparse-checkout-cone-mode: false  # 禁用 cone 模式，支持通配符路径
+          fetch-depth: 0  # 确保拉取完整提交历史（避免文件缺失）
+          path: "main-repo"  # 可选：将仓库检出到子目录避免路径冲突
+          
       - name: "⭐ Install prerequisites"
         run: |
           sudo apt-get update
@@ -73,14 +82,15 @@ jobs:
           git clone --recursive --depth=1 -j $(nproc) --branch $KERNEL_BRANCH $KERNEL_REPO $KERNEL_NAME
 
           echo "🤔 Clone kernel source => ($KERNEL_REPO)"
-          # 覆盖
-          cp -f ./patches/input.c ./${{ env.KERNEL_NAME }}/drivers/input/
-          cp -f ./patches/pty.c ./${{ env.KERNEL_NAME }}/drivers/tty/
-          cp -f ./patches/exec.c ./${{ env.KERNEL_NAME }}/fs/
-          cp -f ./patches/open.c ./${{ env.KERNEL_NAME }}/fs/
-          cp -f ./patches/read_write.c ./${{ env.KERNEL_NAME }}/fs/
-          cp -f ./patches/stat.c ./${{ env.KERNEL_NAME }}/fs/
-          cp -f ./patches/namespace.c ./${{ env.KERNEL_NAME }}/fs/
+          
+          # 从稀疏检出的目录复制 patches覆盖
+          cp -f ./main-repo/patches/input.c ./${{ env.KERNEL_NAME }}/drivers/input/
+          cp -f ./main-repo/patches/pty.c ./${{ env.KERNEL_NAME }}/drivers/tty/
+          cp -f ./main-repo/patches/exec.c ./${{ env.KERNEL_NAME }}/fs/
+          cp -f ./main-repo/patches/open.c ./${{ env.KERNEL_NAME }}/fs/
+          cp -f ./main-repo/patches/read_write.c ./${{ env.KERNEL_NAME }}/fs/
+          cp -f ./main-repo/patches/stat.c ./${{ env.KERNEL_NAME }}/fs/
+          cp -f ./main-repo/patches/namespace.c ./${{ env.KERNEL_NAME }}/fs/
           
       - name: "💫 Get toolchains"
         env:
