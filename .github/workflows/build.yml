@@ -1,4 +1,4 @@
-name: "Build mix2s_kernels_MKSU-SKN"
+name: "Build mix2s_kernels_text"
 
 env:
   OUT_DIR: "${{ github.workspace }}/out"
@@ -15,7 +15,7 @@ jobs:
       builddate: ${{ steps.generate-builddate.outputs.builddate }}
     steps:
       - name: "😄 Checkout"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
       - name: "😆 Generate Matrix"
         id: generate-matrix
@@ -123,26 +123,26 @@ jobs:
           echo "ARCH=$ARCH" >> $GITHUB_OUTPUT
           echo "args=$args" >> $GITHUB_OUTPUT
 
-      - name: "😋 Update KernelSU"
-        working-directory: ${{ env.KERNEL_NAME }}
-        env:
-          arch: ${{ steps.generate-args.outputs.ARCH }}
-        if: ${{ env.withKernelSU == 'true' }}
-        run: |
-          if [ -d "./KernelSU" ]; then
-            rm -rf "./KernelSU"
-          fi
-          if [ -d "./drivers/kernelsu" ]; then
-            rm -rf "./drivers/kernelsu"
-          fi
+      # - name: "😋 Update KernelSU"
+      #   working-directory: ${{ env.KERNEL_NAME }}
+      #   env:
+      #     arch: ${{ steps.generate-args.outputs.ARCH }}
+      #   if: ${{ env.withKernelSU == 'true' }}
+      #   run: |
+      #     if [ -d "./KernelSU" ]; then
+      #       rm -rf "./KernelSU"
+      #     fi
+      #     if [ -d "./drivers/kernelsu" ]; then
+      #       rm -rf "./drivers/kernelsu"
+      #     fi
 
-          curl -LSs "https://raw.githubusercontent.com/ShirkNeko/KernelSU/main/kernel/setup.sh" | bash -s dev
+      #     curl -LSs "https://raw.githubusercontent.com/ShirkNeko/KernelSU/main/kernel/setup.sh" | bash -s dev
 
-          echo -e "CONFIG_KPROBES=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
-          echo -e "CONFIG_HAVE_KPROBES=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
-          echo -e "CONFIG_KPROBE_EVENTS=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
+      #     echo -e "CONFIG_KPROBES=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
+      #     echo -e "CONFIG_HAVE_KPROBES=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
+      #     echo -e "CONFIG_KPROBE_EVENTS=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
 
-          cat arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
+      #     cat arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
 
       - name: "👍 Make defconfig"
         working-directory: ${{ env.KERNEL_NAME }}
