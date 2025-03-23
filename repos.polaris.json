@@ -5,7 +5,7 @@
       "repo": "https://github.com/MiCode/Xiaomi_Kernel_OpenSource",
       "branch": "polaris-o-oss",
       "device": "polaris",
-      "defconfig": "polaris_user_defconfig"
+      "defconfig": "polaris_user"
     },
     "withKernelSU": true,
     "toolchains": [
