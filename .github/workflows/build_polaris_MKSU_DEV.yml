@@ -145,7 +145,7 @@ jobs:
           cp -f ../patches/stat.c ./fs/
           cp -f ../patches/namespace.c ./fs/
           
-          curl -LSs "https://raw.githubusercontent.com/rsuntk/KernelSU/main/kernel/setup.sh" | bash -s main
+          curl -LSs "https://raw.githubusercontent.com/ShirkNeko/KernelSU/main/kernel/setup.sh" | bash -s dev
           
           echo -e "CONFIG_KSU=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
 
