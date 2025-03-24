@@ -136,7 +136,7 @@ jobs:
             rm -rf "./drivers/kernelsu"
           fi
           
-          curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s v0.9.5
+          curl -LSs "https://raw.githubusercontent.com/ShirkNeko/KernelSU/main/kernel/setup.sh" | bash -s dev
           
       - name: "👍 Make defconfig"
         working-directory: ${{ env.KERNEL_NAME }}
