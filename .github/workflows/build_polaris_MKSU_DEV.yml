@@ -137,6 +137,15 @@ jobs:
           fi
           
           curl -LSs "https://raw.githubusercontent.com/ShirkNeko/KernelSU/main/kernel/setup.sh" | bash -s dev
+
+          # 修复 non_rcu 兼容性问题
+          if [ -f "KernelSU/kernel/kernel_compat.h" ]; then
+            sed -i '/nonconst_cred->non_rcu = 0;/d' KernelSU/kernel/kernel_compat.h
+            echo "[+] Removed non_rcu operation from kernel_compat.h"
+          else
+            echo "[!] kernel_compat.h not found, check KernelSU directory structure"
+            exit 1
+          fi
           
       - name: "👍 Make defconfig"
         working-directory: ${{ env.KERNEL_NAME }}
