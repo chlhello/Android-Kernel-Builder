@@ -147,21 +147,25 @@ jobs:
       - name: "📂 Checkout patches"
         uses: actions/checkout@v4
         with:
+          path: .  # ✅ 必须检出到工作区根目录
           sparse-checkout: |
             patches/sukisu_Makefile.patch
-            .github/workflows/  # 保留工作流文件
-          path: .
+            .github/workflows/
           fetch-depth: 0
       
       - name: "🔧 Apply KernelSU Makefile Patch"
         working-directory: ${{ env.KERNEL_NAME }}
         if: ${{ env.withKernelSU == 'true' }}
         run: |
-          echo "工作区绝对路径: ${{ github.workspace }}"
-          ls -l ${{ github.workspace }}/patches
-      
+          # 验证仓库根目录结构
+          echo "工作区路径: ${{ github.workspace }}"
+          ls -al ${{ github.workspace }}
+    
+          # 应用补丁
           git apply --verbose "${{ github.workspace }}/patches/sukisu_Makefile.patch"
-          grep "KSU_UMOUNT" KernelSU/kernel/Makefile
+    
+          # 二次验证
+          grep "KSU_UMOUNT" KernelSU/kernel/Makefile || (echo "❌ 补丁未生效"; exit 1)
       
       - name: "👍 Make defconfig"
         working-directory: ${{ env.KERNEL_NAME }}
