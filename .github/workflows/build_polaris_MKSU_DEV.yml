@@ -145,6 +145,18 @@ jobs:
 
           cat arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
           
+      - name: "🔧 Apply KernelSU Makefile Patch"
+        working-directory: ${{ env.KERNEL_NAME }}
+        if: ${{ env.withKernelSU == 'true' }}
+        run: |
+          if [ -f "${{ github.workspace }}/patches/sukisu_Makefile.patch" ]; then
+            git apply --verbose "${{ github.workspace }}/patches/sukisu_Makefile.patch"
+          else
+            echo "❌ 补丁文件不存在！路径: ${{ github.workspace }}/patches/sukisu_Makefile.patch"
+            exit 1
+          fi
+          grep -q "KSU_UMOUNT" KernelSU/kernel/Makefile || (echo "❌ 补丁应用失败！"; exit 1)
+      
       - name: "👍 Make defconfig"
         working-directory: ${{ env.KERNEL_NAME }}
         env:
