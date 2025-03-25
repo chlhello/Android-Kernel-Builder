@@ -68,6 +68,15 @@ jobs:
 
           echo "🤔 Setup Anykernel3 => ($ANYKERNEL_REPO)"
 
+      - name: "📂 Checkout patches"
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            patches/sukisu_Makefile.patch  # 精确到文件级别
+            .github/workflows/  # 保留工作流文件
+          path: .  # ✅ 必须检出到工作区根目录
+          fetch-depth: 0
+      
       - name: "🌟 Clone kernel source => (${{ env.KERNEL_REPO }})"
         run: |
           git clone --recursive --depth=1 -j $(nproc) --branch $KERNEL_BRANCH $KERNEL_REPO $KERNEL_NAME
@@ -144,28 +153,24 @@ jobs:
           # echo -e "CONFIG_KPROBE_EVENTS=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
 
           # cat arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
-      - name: "📂 Checkout patches"
-        uses: actions/checkout@v4
-        with:
-          path: .  # ✅ 必须检出到工作区根目录
-          sparse-checkout: |
-            patches/sukisu_Makefile.patch
-            .github/workflows/
-          fetch-depth: 0
-      
+
       - name: "🔧 Apply KernelSU Makefile Patch"
         working-directory: ${{ env.KERNEL_NAME }}
         if: ${{ env.withKernelSU == 'true' }}
         run: |
           # 验证仓库根目录结构
-          echo "工作区路径: ${{ github.workspace }}"
-          ls -al ${{ github.workspace }}
-    
-          # 应用补丁
-          git apply --verbose "${{ github.workspace }}/patches/sukisu_Makefile.patch"
-    
-          # 二次验证
-          grep "KSU_UMOUNT" KernelSU/kernel/Makefile || (echo "❌ 补丁未生效"; exit 1)
+          echo "工作区绝对路径: ${{ github.workspace }}"
+          ls -l ${{ github.workspace }}/patches
+      
+          # 应用补丁（使用绝对路径）
+          PATCH_PATH="${{ github.workspace }}/patches/sukisu_Makefile.patch"
+          if [ -f "$PATCH_PATH" ]; then
+            git apply --verbose --directory=KernelSU/kernel "$PATCH_PATH"  # 
+            grep "KSU_UMOUNT" KernelSU/kernel/Makefile || (echo "❌ 补丁未生效"; exit 1)
+          else
+            echo "❌ 补丁文件不存在！请检查路径：$PATCH_PATH"
+            exit 1
+          fi
       
       - name: "👍 Make defconfig"
         working-directory: ${{ env.KERNEL_NAME }}
