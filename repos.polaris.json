@@ -3,7 +3,7 @@
     "kernelSource": {
       "name": "Mix2s_MKSU",
       "repo": "https://github.com/chlhello/Xiaomi_Kernel_OpenSource-sdm845",
-      "branch": "88-zstd",
+      "branch": "HY",
       "device": "polaris",
       "defconfig": "polaris_user_defconfig"
     },
