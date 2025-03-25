@@ -53,12 +53,6 @@ jobs:
       useAnykernel: ${{ matrix.repos.AnyKernel3.use }}
       release: ${{ matrix.repos.AnyKernel3.release }}
     steps:
-      - name: "📂 Checkout patches"
-        uses: actions/checkout@v4
-        with:
-          path: patches
-          sparse-checkout: patches/  # 仅检出 patches 目录
-          fetch-depth: 0
       - name: "⭐ Install prerequisites"
         run: |
           sudo apt-get update
@@ -150,26 +144,24 @@ jobs:
           # echo -e "CONFIG_KPROBE_EVENTS=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
 
           # cat arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
-          
+      - name: "📂 Checkout patches"
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            patches/sukisu_Makefile.patch
+            .github/workflows/  # 保留工作流文件
+          path: .
+          fetch-depth: 0
+      
       - name: "🔧 Apply KernelSU Makefile Patch"
         working-directory: ${{ env.KERNEL_NAME }}
         if: ${{ env.withKernelSU == 'true' }}
         run: |
-          PATCH_PATH="${{ github.workspace }}/patches/sukisu_Makefile.patch"
-    
-          echo "当前工作目录: $(pwd)"
-          echo "补丁文件路径: $PATCH_PATH"
-          ls -l ${{ github.workspace }}/patches/  # 验证目录内容
-    
-          if [ -f "$PATCH_PATH" ]; then
-            echo "✅ 找到补丁文件，开始应用..."
-            git apply --verbose "$PATCH_PATH"
-          else
-            echo "❌ 补丁文件不存在！路径: $PATCH_PATH"
-            exit 1
-          fi
-          grep -q "KSU_UMOUNT" KernelSU/kernel/Makefile || (echo "❌ 补丁应用失败，未找到关键标记！"; exit 1)
-          echo "✅ 补丁验证通过"
+          echo "工作区绝对路径: ${{ github.workspace }}"
+          ls -l ${{ github.workspace }}/patches
+      
+          git apply --verbose "${{ github.workspace }}/patches/sukisu_Makefile.patch"
+          grep "KSU_UMOUNT" KernelSU/kernel/Makefile
       
       - name: "👍 Make defconfig"
         working-directory: ${{ env.KERNEL_NAME }}
