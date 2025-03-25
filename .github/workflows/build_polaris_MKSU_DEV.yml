@@ -138,12 +138,12 @@ jobs:
           
           curl -LSs "https://raw.githubusercontent.com/ShirkNeko/KernelSU/main/kernel/setup.sh" | bash -s dev
           
-          sed -i '$d' ./KernelSU/kernel/ksu.c
-          echo -e "CONFIG_KPROBES=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
-          echo -e "CONFIG_HAVE_KPROBES=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
-          echo -e "CONFIG_KPROBE_EVENTS=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
+          # sed -i '$d' ./KernelSU/kernel/ksu.c
+          # echo -e "CONFIG_KPROBES=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
+          # echo -e "CONFIG_HAVE_KPROBES=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
+          # echo -e "CONFIG_KPROBE_EVENTS=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
 
-          cat arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
+          # cat arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
           
       - name: "🔧 Apply KernelSU Makefile Patch"
         working-directory: ${{ env.KERNEL_NAME }}
