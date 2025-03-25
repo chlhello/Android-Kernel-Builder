@@ -53,6 +53,12 @@ jobs:
       useAnykernel: ${{ matrix.repos.AnyKernel3.use }}
       release: ${{ matrix.repos.AnyKernel3.release }}
     steps:
+      - name: "📂 Checkout patches"
+        uses: actions/checkout@v4
+        with:
+          path: patches
+          sparse-checkout: patches/  # 仅检出 patches 目录
+          fetch-depth: 0
       - name: "⭐ Install prerequisites"
         run: |
           sudo apt-get update
