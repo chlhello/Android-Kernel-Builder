@@ -149,13 +149,21 @@ jobs:
         working-directory: ${{ env.KERNEL_NAME }}
         if: ${{ env.withKernelSU == 'true' }}
         run: |
-          if [ -f "${{ github.workspace }}/patches/sukisu_Makefile.patch" ]; then
-            git apply --verbose "${{ github.workspace }}/patches/sukisu_Makefile.patch"
+          PATCH_PATH="${{ github.workspace }}/patches/sukisu_Makefile.patch"
+    
+          echo "当前工作目录: $(pwd)"
+          echo "补丁文件路径: $PATCH_PATH"
+          ls -l ${{ github.workspace }}/patches/  # 验证目录内容
+    
+          if [ -f "$PATCH_PATH" ]; then
+            echo "✅ 找到补丁文件，开始应用..."
+            git apply --verbose "$PATCH_PATH"
           else
-            echo "❌ 补丁文件不存在！路径: ${{ github.workspace }}/patches/sukisu_Makefile.patch"
+            echo "❌ 补丁文件不存在！路径: $PATCH_PATH"
             exit 1
           fi
-          grep -q "KSU_UMOUNT" KernelSU/kernel/Makefile || (echo "❌ 补丁应用失败！"; exit 1)
+          grep -q "KSU_UMOUNT" KernelSU/kernel/Makefile || (echo "❌ 补丁应用失败，未找到关键标记！"; exit 1)
+          echo "✅ 补丁验证通过"
       
       - name: "👍 Make defconfig"
         working-directory: ${{ env.KERNEL_NAME }}
