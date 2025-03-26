@@ -165,7 +165,7 @@ jobs:
           # 应用补丁（使用绝对路径）
           PATCH_PATH="${{ github.workspace }}/patches/sukisu_Makefile.patch"
           if [ -f "$PATCH_PATH" ]; then
-            git apply --verbose --directory=KernelSU/kernel "$PATCH_PATH"  # 
+            git apply --verbose --directory= "$PATCH_PATH"  # 
             grep "KSU_UMOUNT" KernelSU/kernel/Makefile || (echo "❌ 补丁未生效"; exit 1)
           else
             echo "❌ 补丁文件不存在！请检查路径：$PATCH_PATH"
