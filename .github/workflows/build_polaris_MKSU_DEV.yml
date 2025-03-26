@@ -53,6 +53,15 @@ jobs:
       useAnykernel: ${{ matrix.repos.AnyKernel3.use }}
       release: ${{ matrix.repos.AnyKernel3.release }}
     steps:
+      - name: "📂 Checkout patches"
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            patches/sukisu_Makefile.patch
+          path: .
+          fetch-depth: 0
+          clean: false
+      
       - name: "⭐ Install prerequisites"
         run: |
           sudo apt-get update
@@ -144,15 +153,6 @@ jobs:
           # echo -e "CONFIG_KPROBE_EVENTS=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
 
           # cat arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
-
-      - name: "📂 Checkout patches"
-        uses: actions/checkout@v4
-        with:
-          sparse-checkout: |
-            patches/sukisu_Makefile.patch
-          path: .
-          fetch-depth: 0
-          clean: false
 
       - name: "🔧 Apply KernelSU Makefile Patch"
         working-directory: ${{ env.KERNEL_NAME }}  # 确保在内核源码目录操作
