@@ -67,15 +67,6 @@ jobs:
           git clone --recursive --depth=1 -j $(nproc) --branch $ANYKERNEL_BRANCH $ANYKERNEL_REPO AnyKernel3
 
           echo "🤔 Setup Anykernel3 => ($ANYKERNEL_REPO)"
-
-      - name: "📂 Checkout patches"
-        uses: actions/checkout@v4
-        with:
-          sparse-checkout: |
-            patches/sukisu_Makefile.patch  # 精确到文件级别
-            .github/workflows/  # 保留工作流文件
-          path: .  # ✅ 必须检出到工作区根目录
-          fetch-depth: 0
       
       - name: "🌟 Clone kernel source => (${{ env.KERNEL_REPO }})"
         run: |
@@ -153,6 +144,15 @@ jobs:
           # echo -e "CONFIG_KPROBE_EVENTS=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
 
           # cat arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
+
+      - name: "📂 Checkout patches"
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            patches/sukisu_Makefile.patch
+          path: .
+          fetch-depth: 0
+          clean: false
 
       - name: "🔧 Apply KernelSU Makefile Patch"
         working-directory: ${{ env.KERNEL_NAME }}
