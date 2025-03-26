@@ -1,7 +1,7 @@
 [
   {
     "kernelSource": {
-      "name": "Mix2s_MKSU",
+      "name": "Mix2s_SukiSU",
       "repo": "https://github.com/chlhello/Xiaomi_Kernel_OpenSource-sdm845",
       "branch": "88-zstd",
       "device": "polaris",
